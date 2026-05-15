@@ -16,7 +16,7 @@ The core design parameters and tasks are modeled based on research specification
 ### Simscape Multibody 3D Environment
 The physical plant layout and real-time rigid body dynamics are computed and visualized inside the Simulink Simscape Multibody mechanics explorer interface.
 
-![Simscape 3D Simulation Environment](SimEnvironment.JPG)
+![Simscape 3D Simulation Environment](outputs/SimEnvironment.JPG)
 ---
 
 ## 📊 Simulation Results & Visualizations
@@ -27,7 +27,7 @@ The custom-built MATLAB GUI allows real-time manipulation of joint spaces and im
 ![SCARA Base UI Configuration](outputs/1-Base.jpg)
 
 ### 2. Kinematics Verification
-Below are the graphical verifications demonstrating successful calculation tracks for both forward workspace coordinate mapping and closed-form analytical inverse solutions.
+Below the results of the simulation is given for two random GUI data inputs. One are the random angles given for forward kinematics, and the others are random cartesian coordinates for the Inverse Kinematics case. Calculations tracks for both forward workspace coordinate mapping and closed-form analytical inverse solutions.
 
 | Forward Kinematics Tracking | Inverse Kinematics Solvers |
 | :---: | :---: |
@@ -44,7 +44,6 @@ The corresponding digram and schematics of the model:
 
 
 Based on the physical model blueprints and configuration script (`t.m`), the geometric parameters are explicitly defined as:
-
 ![SCARA model diagram & schematics](outputs/modelDiagram.JPG)
 
 * $l_1 = 0.45\text{ m}$ (Base height offset along the $\hat{z}_0$ axis)
@@ -55,41 +54,73 @@ Based on the physical model blueprints and configuration script (`t.m`), the geo
 ### 2. Forward Kinematics (Successive Homogeneous Transformations)
 To map local joint displacements to global Cartesian positions, successive homogeneous transformation matrices are evaluated sequentially from the base frame $\{0\}$ to the tool tip frame $\{4\}$:
 
-$$T_1(\theta_1) = \begin{bmatrix} \cos\theta_1 & -\sin\theta_1 & 0 & l_2\cos\theta_1 \\ \sin\theta_1 & \cos\theta_1 & 0 & l_2\sin\theta_1 \\ 0 & 0 & 1 & l_1 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+$$
+T_1(\theta_1) = \begin{bmatrix} \cos\theta_1 & -\sin\theta_1 & 0 & l_2\cos\theta_1 \\ \sin\theta_1 & \cos\theta_1 & 0 & l_2\sin\theta_1 \\ 0 & 0 & 1 & l_1 \\ 0 & 0 & 0 & 1 \end{bmatrix}
+$$
 
-$$T_2(\theta_2) = \begin{bmatrix} \cos\theta_2 & -\sin\theta_2 & 0 & l_3\cos\theta_2 \\ \sin\theta_2 & \cos\theta_2 & 0 & l_3\sin\theta_2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+$$
+T_2(\theta_2) = \begin{bmatrix} \cos\theta_2 & -\sin\theta_2 & 0 & l_3\cos\theta_2 \\ \sin\theta_2 & \cos\theta_2 & 0 & l_3\sin\theta_2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}
+$$
 
-$$T_3(\theta_3) = \begin{bmatrix} \cos\theta_3 & -\sin\theta_3 & 0 & 0 \\ \sin\theta_3 & \cos\theta_3 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+$$
+T_3(\theta_3) = \begin{bmatrix} \cos\theta_3 & -\sin\theta_3 & 0 & 0 \\ \sin\theta_3 & \cos\theta_3 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}
+$$
 
-$$T_4(\theta_4) = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & -l_4 - \theta_4 \\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+$$
+T_4(\theta_4) = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & -l_4 - \theta_4 \\ 0 & 0 & 0 & 1 \end{bmatrix}
+$$
 
 Multiplying these matrices yields the final composite transformation matrix ($T = T_1 \cdot T_2 \cdot T_3 \cdot T_4$). Isolating the upper-right position vector components defines the explicit end-effector positions in Cartesian space ($P_x, P_y, P_z$):
 
-$$P_x = l_2\cos\theta_1 + l_3\cos(\theta_1 + \theta_2)$$
+$$
+P_x = l_2\cos\theta_1 + l_3\cos(\theta_1 + \theta_2)
+$$
 
-$$P_y = l_2\sin\theta_1 + l_3\sin(\theta_1 + \theta_2)$$
+$$
+P_y = l_2\sin\theta_1 + l_3\sin(\theta_1 + \theta_2)
+$$
 
-$$P_z = l_1 - l_4 - \theta_4$$
+$$
+P_z = l_1 - l_4 - \theta_4
+$$
 
 ### 3. Step-by-Step Analytical Inverse Kinematics
 Given a desired target position $(P_x, P_y, P_z)$ and a target end-effector orientation $\phi$, the corresponding joint spaces are analytically calculated to guarantee exact track positioning:
 
 * **Solving for Joint 2 ($\theta_2$)**:
   Squaring and adding $P_x$ and $P_y$ isolates the planar configuration:
-  $$P_x^2 + P_y^2 = l_2^2 + l_3^2 + 2l_2 l_3\cos\theta_2 \implies \cos\theta_2 = \frac{P_x^2 + P_y^2 - l_2^2 - l_3^2}{2l_2 l_3}$$
-  $$\sin\theta_2 = \pm\sqrt{1 - \cos^2\theta_2}$$
-  $$\theta_2 = \operatorname{atan2}(\sin\theta_2, \cos\theta_2)$$
+  
+  $$
+  \cos\theta_2 = \frac{P_x^2 + P_y^2 - l_2^2 - l_3^2}{2l_2 l_3}
+  $$
+  
+  $$
+  \sin\theta_2 = \pm\sqrt{1 - \cos^2\theta_2}
+  $$
+  
+  $$
+  \theta_2 = \operatorname{atan2}(\sin\theta_2, \cos\theta_2)
+  $$
 
 * **Solving for Joint 1 ($\theta_1$)**:
   Using trigonometric subtraction identities, $\theta_1$ is isolated relative to the geometric target vector:
-  $$\theta_1 = \operatorname{atan2}(P_y, P_x) - \operatorname{atan2}(l_3\sin\theta_2, l_2 + l_3\cos\theta_2)$$
+  
+  $$
+  \theta_1 = \operatorname{atan2}(P_y, P_x) - \operatorname{atan2}(l_3\sin\theta_2, l_2 + l_3\cos\theta_2)
+  $$
 
 * **Solving for Prismatic Joint 4 ($\theta_4$)**:
   Linear mapping from the vertical axis yields:
-  $$\theta_4 = l_1 - l_4 - P_z$$
+  
+  $$
+  \theta_4 = l_1 - l_4 - P_z
+  $$
 
 * **Solving for Joint 3 ($\theta_3$)**:
-  $$\theta_3 = \phi - \theta_1 - \theta_2$$
+  
+  $$
+  \theta_3 = \phi - \theta_1 - \theta_2
+  $$
 
 ---
 
