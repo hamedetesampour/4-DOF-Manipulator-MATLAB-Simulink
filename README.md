@@ -2,7 +2,7 @@
 
 An advanced, end-to-end engineering framework for the modeling, analytical derivation, and physical simulation of a 4-Degree-of-Freedom (4-DOF) SCARA (Selective Compliance Assembly Robot Arm) manipulator. This repository bridges theoretical robot kinematics with an interactive MATLAB GUI, custom test scripts, and a high-fidelity Simscape Multibody physics engine simulation.
 
-The core design parameters and tasks are modeled based on research specifications from the Department of Electrical Engineering at Amirkabir University of Technology (Tehran Polytechnic).
+![Simscape 3D Simulation Environment](outputs/SimEnvironment.JPG)
 
 ---
 
@@ -13,16 +13,14 @@ The core design parameters and tasks are modeled based on research specification
 * **Simscape Multibody Physics**: Direct synchronization between the mathematical joint space vector and a 3D physical rigid-body tree simulation environment.
 * **CAD Integration & Material Profiling**: Seamless import capability for native 3D SolidWorks parts matching exact mass properties and structural constraints.
 
-### Simscape Multibody 3D Environment
-The physical plant layout and real-time rigid body dynamics are computed and visualized inside the Simulink Simscape Multibody mechanics explorer interface.
 
-![Simscape 3D Simulation Environment](outputs/SimEnvironment.JPG)
 ---
 
 ## 📊 Simulation Results & Visualizations
 
 ### 1. Interactive UI & Base Configuration
 The custom-built MATLAB GUI allows real-time manipulation of joint spaces and immediate verification of the robot's zero-configuration state.
+The physical plant layout and real-time rigid body dynamics are computed and visualized inside the Simulink Simscape Multibody mechanics explorer interface.
 
 ![SCARA Base UI Configuration](outputs/1-Base.jpg)
 
@@ -88,39 +86,39 @@ $$
 Given a desired target position $(P_x, P_y, P_z)$ and a target end-effector orientation $\phi$, the corresponding joint spaces are analytically calculated to guarantee exact track positioning:
 
 * **Solving for Joint 2 ($\theta_2$)**:
-  Squaring and adding $P_x$ and $P_y$ isolates the planar configuration:
+Squaring and adding $P_x$ and $P_y$ isolates the planar configuration:
   
-  $$
-  \cos\theta_2 = \frac{P_x^2 + P_y^2 - l_2^2 - l_3^2}{2l_2 l_3}
-  $$
+$$
+\cos\theta_2 = \frac{P_x^2 + P_y^2 - l_2^2 - l_3^2}{2l_2 l_3}
+$$
   
-  $$
-  \sin\theta_2 = \pm\sqrt{1 - \cos^2\theta_2}
-  $$
+$$
+\sin\theta_2 = \pm\sqrt{1 - \cos^2\theta_2}
+$$
   
-  $$
-  \theta_2 = \operatorname{atan2}(\sin\theta_2, \cos\theta_2)
-  $$
+$$
+\theta_2 = \operatorname{atan2}(\sin\theta_2, \cos\theta_2)
+$$
 
 * **Solving for Joint 1 ($\theta_1$)**:
-  Using trigonometric subtraction identities, $\theta_1$ is isolated relative to the geometric target vector:
+Using trigonometric subtraction identities, $\theta_1$ is isolated relative to the geometric target vector:
   
-  $$
-  \theta_1 = \operatorname{atan2}(P_y, P_x) - \operatorname{atan2}(l_3\sin\theta_2, l_2 + l_3\cos\theta_2)
-  $$
+$$
+\theta_1 = \operatorname{atan2}(P_y, P_x) - \operatorname{atan2}(l_3\sin\theta_2, l_2 + l_3\cos\theta_2)
+$$
 
 * **Solving for Prismatic Joint 4 ($\theta_4$)**:
-  Linear mapping from the vertical axis yields:
+Linear mapping from the vertical axis yields:
   
-  $$
-  \theta_4 = l_1 - l_4 - P_z
-  $$
+$$
+\theta_4 = l_1 - l_4 - P_z
+$$
 
 * **Solving for Joint 3 ($\theta_3$)**:
   
-  $$
-  \theta_3 = \phi - \theta_1 - \theta_2
-  $$
+$$
+\theta_3 = \phi - \theta_1 - \theta_2
+$$
 
 ---
 
