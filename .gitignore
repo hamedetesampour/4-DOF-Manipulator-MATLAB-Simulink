@@ -1,0 +1,6 @@
+# MATLAB & Simulink temporary or auto-generated cache files
+*.asv
+*.slxc
+*.mex*
+*.log
+slprj/
