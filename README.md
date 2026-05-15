@@ -97,14 +97,14 @@ $$
 $$
   
 $$
-\theta_2 = \operatorname{atan2}(\sin\theta_2, \cos\theta_2)
+\theta_2 = \text{atan2}(\sin\theta_2, \cos\theta_2)
 $$
 
 * **Solving for Joint 1 ($\theta_1$)**:
 Using trigonometric subtraction identities, $\theta_1$ is isolated relative to the geometric target vector:
   
 $$
-\theta_1 = \operatorname{atan2}(P_y, P_x) - \operatorname{atan2}(l_3\sin\theta_2, l_2 + l_3\cos\theta_2)
+\theta_1 = \text{atan2}(P_y, P_x) - \text{atan2}(l_3\sin\theta_2, l_2 + l_3\cos\theta_2)
 $$
 
 * **Solving for Prismatic Joint 4 ($\theta_4$)**:
