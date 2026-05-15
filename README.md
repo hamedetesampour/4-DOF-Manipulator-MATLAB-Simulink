@@ -13,6 +13,26 @@ The core design parameters and tasks are modeled based on research specification
 * **Simscape Multibody Physics**: Direct synchronization between the mathematical joint space vector and a 3D physical rigid-body tree simulation environment.
 * **CAD Integration & Material Profiling**: Seamless import capability for native 3D SolidWorks parts matching exact mass properties and structural constraints.
 
+### Simscape Multibody 3D Environment
+The physical plant layout and real-time rigid body dynamics are computed and visualized inside the Simulink Simscape Multibody mechanics explorer interface.
+
+![Simscape 3D Simulation Environment](SimEnvironment.JPG)
+---
+
+## 📊 Simulation Results & Visualizations
+
+### 1. Interactive UI & Base Configuration
+The custom-built MATLAB GUI allows real-time manipulation of joint spaces and immediate verification of the robot's zero-configuration state.
+
+![SCARA Base UI Configuration](outputs/1-Base.jpg)
+
+### 2. Kinematics Verification
+Below are the graphical verifications demonstrating successful calculation tracks for both forward workspace coordinate mapping and closed-form analytical inverse solutions.
+
+| Forward Kinematics Tracking | Inverse Kinematics Solvers |
+| :---: | :---: |
+| ![Forward Kinematics](outputs/2-Forward.jpg) | ![Inverse Kinematics](outputs/3-Inverse.jpg) |
+
 ---
 
 ## 📐 Kinematics & Mathematical Foundations
@@ -20,7 +40,13 @@ The core design parameters and tasks are modeled based on research specification
 The manipulator consists of three revolute joints ($\theta_1$, $\theta_2$, $\theta_3$) and one prismatic joint ($\theta_4$). At the zero-configuration ($t=0$), all joint variables are initialized to zero, orienting the arm structure such that the third link sits exactly $0.3\text{ m}$ above the second link.
 
 ### 1. Link Dimensions & Structural Parameters
+The corresponding digram and schematics of the model:
+
+
 Based on the physical model blueprints and configuration script (`t.m`), the geometric parameters are explicitly defined as:
+
+![SCARA model diagram & schematics](outputs/modelDiagram.JPG)
+
 * $l_1 = 0.45\text{ m}$ (Base height offset along the $\hat{z}_0$ axis)
 * $l_2 = 0.45\text{ m}$ (Length of Link 1)
 * $l_3 = 0.72\text{ m}$ (Length of Link 2)
